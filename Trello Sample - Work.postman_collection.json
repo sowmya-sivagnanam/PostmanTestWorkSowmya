@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "13d12fb8-d499-4e18-a888-c56205b505cd",
+		"name": "Trello Sample - Work",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "15869911"
+	},
+	"item": [
+		{
+			"name": "create a board in trello",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"boardName\", getRandomBoardName());",
+							"",
+							"function getRandomBoardName()",
+							"{",
+							"    const boardName = \"My board\" + parseInt(Math.random() * 10000);",
+							"    console.log(boardName);",
+							"    return boardName;",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData);",
+							"pm.globals.set(\"nextid\",jsonData.id);",
+							"pm.globals.set(\"nextname\",jsonData.name);",
+							"",
+							"pm.test(\"Verify Your descData name is\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.descData).to.eql(null);",
+							"    pm.expect(jsonData.prefs.permissionLevel).to.eql(\"private\");",
+							"    console.log(jsonData.prefs.permissionLevel);",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?name=My board&key={{work key}}&token={{work value}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "My board"
+						},
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify the board with the name Work Trelloboard has been created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify the test permission level and switcherViews array of 0\", function ()",
+							" {",
+							"   ",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.prefs.permissionLevel).to.eql(\"private\");",
+							"    console.log(jsonData.prefs.switcherViews[0]);",
+							"    pm.expect(jsonData.prefs.switcherViews[0].viewType).to.eql(\"Board\");",
+							"    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{nextid}}?key={{work key}}&token={{work value}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{nextid}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						},
+						{
+							"key": "id",
+							"value": "{{dynid}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a list on work Trelloboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"listid\", jsonData.id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{nextid}}/lists?name=list name&key={{work key}}&token={{work value}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{nextid}}",
+						"lists"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "list name"
+						},
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update list name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify the Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.trello.com/1/lists/{{listid}}?key={{work key}}&token={{work value}}&name=My board List name",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"lists",
+						"{{listid}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						},
+						{
+							"key": "name",
+							"value": "My board List name"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new card",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"card id\",jsonData.id);",
+							"",
+							"pm.test(\" Verify the due Reminder is null in request body\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.dueReminder).to.eql(null);",
+							"});",
+							"",
+							"pm.test(\"Verify the Status code is 200\", function () {",
+							"    pm.response.to.have.status in ['201','200'];",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/cards?idList={{listid}}&key={{work key}}&token={{work value}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards"
+					],
+					"query": [
+						{
+							"key": "idList",
+							"value": "{{listid}}"
+						},
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View the card created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/cards/{{card id}}?key={{work key}}&token={{work value}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards",
+						"{{card id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{work key}}"
+						},
+						{
+							"key": "token",
+							"value": "{{work value}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
